@@ -1,3 +1,23 @@
 {
-  "buildCommand": "bash download-game.sh && next build"
+  "buildCommand": "bash download-game.bash && next build",
+  "headers": [
+    {
+      "source": "/game/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/game/Build/:path*.wasm",
+      "headers": [
+        { "key": "Content-Type", "value": "application/wasm" }
+      ]
+    },
+    {
+      "source": "/game/Build/:path*.data",
+      "headers": [
+        { "key": "Content-Type", "value": "application/octet-stream" }
+      ]
+    }
+  ]
 }
