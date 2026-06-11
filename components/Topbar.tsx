@@ -57,6 +57,16 @@ const Topbar = () => {
     setShowMenu(false);
   };
 
+  const handleSupportClick = () => {
+    router.push("/support");
+    setShowMenu(false);
+  };
+
+  const handleTrainingClick = () => {
+    router.push("/game/index.html");
+    setShowMenu(false);
+  };
+
   const handleStudentsClick = () => {
     router.push("/my-students");
     setShowMenu(false);
@@ -127,6 +137,7 @@ const Topbar = () => {
           {/* Navigation Links (Desktop) */}
           <div className="hidden md:flex items-center space-x-2">
             {isStudent && (
+              <>
               <button
                 onClick={handleLessonsClick}
                 className={`px-4 py-2 rounded-lg transition-all duration-200 ${
@@ -135,9 +146,27 @@ const Topbar = () => {
               >
                 Мои уроки
               </button>
+              <button
+                onClick={handleSupportClick}
+                className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                  isActive("/support") ? activeClass : inactiveClass
+                }`}
+              >
+                Поддержка
+              </button>
+              <button
+                onClick={handleTrainingClick}
+                className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                  isActive("/support") ? activeClass : inactiveClass
+                }`}
+              >
+                Тренажёр
+              </button>
+              </>
             )}
 
             {isTeacher && (
+              <>
               <button
                 onClick={handleStudentsClick}
                 className={`px-4 py-2 rounded-lg transition-all duration-200 ${
@@ -146,6 +175,15 @@ const Topbar = () => {
               >
                 Мои ученики
               </button>
+              <button
+                onClick={handleSupportClick}
+                className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                  isActive("/support") ? activeClass : inactiveClass
+                }`}
+              >
+                Поддержка
+              </button>
+              </>
             )}
 
             {isAdmin && (
@@ -159,7 +197,7 @@ const Topbar = () => {
                   Заявки
                 </Link>
                 <Link 
-                  href="/admin/support-requests" 
+                  href="/admin/support" 
                   className={`px-4 py-2 rounded-lg transition-all duration-200 ${
                     isActive("/admin/support-requests") ? activeClass : inactiveClass
                   }`}
