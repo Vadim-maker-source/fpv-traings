@@ -375,20 +375,6 @@ export default function ScheduleLessonsPage() {
         <p className="text-[#364954]/60 mt-1">
           Ученик: <span className="font-medium text-[#364954]">{student.fullname}</span> ({student.email})
         </p>
-        
-        <div className="flex items-start gap-3 mt-4 p-4 bg-[#a7c2d3]/10 rounded-lg border border-[#a7c2d3]/30">
-          <svg className="w-5 h-5 text-[#84b1cb] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div className="text-sm text-[#364954]/80">
-            <p className="font-medium text-[#364954] mb-1">Правила планирования:</p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Поля "Тема урока" и "Дата" обязательны для заполнения.</li>
-              <li>Нельзя выбрать время, которое уже занято другим уроком.</li>
-              <li>Между уроками должен быть минимум 1 час.</li>
-            </ul>
-          </div>
-        </div>
       </div>
 
       <div className="space-y-6">
@@ -475,18 +461,19 @@ export default function ScheduleLessonsPage() {
           </div>
         ))}
 
-        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+        {/* Кнопки во всю ширину формы */}
+        <div className="grid grid-cols-2 gap-4 pt-4 w-full">
           <Button
             variant="outline"
             onClick={() => router.push("/my-students")}
-            className="border-[#a7c2d3] hover:bg-[#a7c2d3]/10 hover:text-[#364954] text-[#364954]"
+            className="h-12 text-base font-semibold border-2 border-[#a7c2d3] bg-white text-[#364954] hover:bg-[#a7c2d3]/10 hover:border-[#84b1cb] shadow-[0_4px_0_0_rgba(167,194,211,0.4)] active:shadow-none active:translate-y-1 transition-all duration-150"
           >
             Отмена
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-[#364954] hover:bg-[#84b1cb] text-white flex-1 sm:flex-none sm:min-w-[200px] transition-colors duration-200"
+            className="h-12 text-base font-semibold bg-gradient-to-b from-[#364954] to-[#2a3a45] text-white border border-[#2a3a45] hover:from-[#84b1cb] hover:to-[#6da3c4] shadow-[0_4px_0_0_rgba(54,73,84,0.5)] active:shadow-none active:translate-y-1 transition-all duration-150 disabled:from-neutral-400 disabled:to-neutral-500 disabled:shadow-none disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
