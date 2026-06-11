@@ -1,37 +1,60 @@
-// app/api/gameround/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }  // ✅ params - это Promise
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // ✅ Дожидаемся params
     const { id } = await context.params;
     
-    console.log("=== GAME STATS API ===");
-    console.log("Received ID:", id);
-
     if (!id || typeof id !== "string") {
-      console.error("Invalid or missing ID");
       return NextResponse.json(
         { error: "ID пользователя обязателен" },
         { status: 400 }
       );
     }
 
-    // Получаем игры для этого пользователя
-    const gameRounds = await prisma.gameRound.findMany({
-      where: { 
-        userId: id 
-      },
-      orderBy: { createdAt: "asc" },
+    const userExists = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true }
     });
 
-    console.log(`Found ${gameRounds.length} game rounds for user ${id}`);
+    if (!userExists) {
+      return NextResponse.json(
+        { error: "Пользователь не найден" },
+        { status: 404 }
+      );
+    }
 
-    // Если нет игр
+    const gameRounds = await prisma.gameRound.findMany({
+      where: { userId: id },
+      orderBy: { createdAt: "asc" },
+      select: {
+        id: true,
+        challenge1: true,
+        challenge2: true,
+        challenge3: true,
+        challenge4: true,
+        time: true,
+        totalScore: true,
+        createdAt: true,
+      }
+    });
+
+    const toNumber = (val: any): number => {
+      if (val === null || val === undefined) return 0;
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string') {
+        const parsed = parseFloat(val);
+        return isNaN(parsed) ? 0 : parsed;
+      }
+      if (val && typeof val === 'object' && 'toNumber' in val && typeof val.toNumber === 'function') {
+        return val.toNumber();
+      }
+      return Number(val) || 0;
+    };
+
     if (gameRounds.length === 0) {
       return NextResponse.json({
         totalGames: 0,
@@ -41,35 +64,12 @@ export async function GET(
         bestTime: 0,
         worstScore: 0,
         worstTime: 0,
-        challengeAverages: {
-          challenge1: 0,
-          challenge2: 0,
-          challenge3: 0,
-          challenge4: 0,
-        },
-        challengeBest: {
-          challenge1: 0,
-          challenge2: 0,
-          challenge3: 0,
-          challenge4: 0,
-        },
+        challengeAverages: { challenge1: 0, challenge2: 0, challenge3: 0, challenge4: 0 },
+        challengeBest: { challenge1: 0, challenge2: 0, challenge3: 0, challenge4: 0 },
         allGames: [],
+        userName: undefined,
       }, { status: 200 });
     }
-
-    // Преобразование в числа
-    const toNumber = (val: any): number => {
-      if (val === null || val === undefined) return 0;
-      if (typeof val === 'number') return val;
-      if (typeof val === 'string') {
-        const parsed = parseFloat(val);
-        return isNaN(parsed) ? 0 : parsed;
-      }
-      if (val && typeof val === 'object' && 'toNumber' in val) {
-        return val.toNumber();
-      }
-      return Number(val) || 0;
-    };
 
     const scores = gameRounds.map(r => toNumber(r.totalScore));
     const times = gameRounds.map(r => toNumber(r.time));
@@ -113,27 +113,17 @@ export async function GET(
       })),
     };
 
-    return NextResponse.json(analytics, { 
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      }
-    });
+    return NextResponse.json(analytics, { status: 200 });
+
   } catch (error) {
-    console.error("=== GAME STATS ERROR ===");
     console.error(error);
     
     return NextResponse.json(
       { 
         error: "Внутренняя ошибка сервера",
-        details: error instanceof Error ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.message : undefined
       },
-      { 
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        }
-      }
+      { status: 500 }
     );
   }
 }

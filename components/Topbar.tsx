@@ -201,7 +201,6 @@ const Topbar = () => {
 
             {showMenu && (
               <>
-                {/* Backdrop for mobile click-outside */}
                 <div 
                   className="fixed inset-0 z-10" 
                   onClick={() => setShowMenu(false)}
@@ -217,7 +216,7 @@ const Topbar = () => {
                     onClick={handleProfileClick}
                     className={`w-full px-4 py-2.5 text-left text-sm transition-colors flex items-center gap-2 ${
                       isActive(`/profile/${user.id}`) 
-                        ? "bg-blue-50 text-blue-700 font-medium" 
+                        ? "bg-neutral-100 text-neutral-900 font-medium" 
                         : "text-gray-700 hover:bg-gray-50"
                     }`}
                   >
@@ -230,7 +229,7 @@ const Topbar = () => {
                       onClick={handleLessonsClick}
                       className={`w-full px-4 py-2.5 text-left text-sm transition-colors flex items-center gap-2 ${
                         isActive("/lessons") 
-                          ? "bg-blue-50 text-blue-700 font-medium" 
+                          ? "bg-neutral-100 text-neutral-900 font-medium" 
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -244,7 +243,7 @@ const Topbar = () => {
                       onClick={handleStudentsClick}
                       className={`w-full px-4 py-2.5 text-left text-sm transition-colors flex items-center gap-2 ${
                         isActive("/my-students") 
-                          ? "bg-blue-50 text-blue-700 font-medium" 
+                          ? "bg-neutral-100 text-neutral-900 font-medium" 
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >

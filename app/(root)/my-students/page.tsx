@@ -227,13 +227,13 @@ export default function MyStudentsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-neutral-50">
+      <div className="flex items-center justify-center min-h-screen bg-[#a7c2d3]/10">
         <div className="text-center">
-          <svg className="animate-spin h-10 w-10 text-black mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-10 w-10 text-[#364954] mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <p className="text-neutral-500 font-medium">Загрузка...</p>
+          <p className="text-[#364954]/70 font-medium">Загрузка...</p>
         </div>
       </div>
     );
@@ -245,20 +245,20 @@ export default function MyStudentsPage() {
     <div className="max-w-6xl mx-auto p-6 md:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">Мои ученики</h1>
-          <p className="text-neutral-500 mt-1">Всего: {user.students?.length || 0}</p>
+          <h1 className="text-3xl font-bold text-[#364954] tracking-tight">Мои ученики</h1>
+          <p className="text-[#364954]/60 mt-1">Всего: {user.students?.length || 0}</p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
-            <Button className="bg-black hover:bg-neutral-800 text-white font-medium px-6">
+            <Button className="bg-[#364954] hover:bg-[#84b1cb] text-white font-medium px-6 transition-colors duration-200">
               Добавить ученика
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md border-[#a7c2d3]/30">
             <DialogHeader>
-              <DialogTitle>Добавить ученика</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-[#364954]">Добавить ученика</DialogTitle>
+              <DialogDescription className="text-[#364954]/70">
                 Найдите ученика без тренера по имени или email
               </DialogDescription>
             </DialogHeader>
@@ -268,37 +268,37 @@ export default function MyStudentsPage() {
                 placeholder="Поиск по имени или email..."
                 value={searchQuery}
                 onChange={(e) => handleSearchInput(e.target.value)}
-                className="w-full focus:ring-1 focus:ring-black focus:border-black"
+                className="w-full focus:ring-2 focus:ring-[#84b1cb]/50 focus:border-[#84b1cb] border-[#a7c2d3] text-[#364954] placeholder:text-[#364954]/40"
               />
               
               <ScrollArea className="h-[300px] pr-4">
                 {isSearching ? (
                   <div className="flex justify-center py-8">
-                    <div className="text-neutral-500">Поиск...</div>
+                    <div className="text-[#364954]/60">Поиск...</div>
                   </div>
                 ) : searchResults.length > 0 ? (
                   <div className="space-y-2">
                     {searchResults.map((student) => (
                       <div
                         key={student.id}
-                        className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                        className="flex items-center justify-between p-3 border border-[#a7c2d3]/40 rounded-lg hover:bg-[#a7c2d3]/10 transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-neutral-900 text-white text-sm font-medium">
+                            <AvatarFallback className="bg-[#364954] text-white text-sm font-medium">
                               {student.fullname.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium text-neutral-900">{student.fullname}</p>
-                            <p className="text-sm text-neutral-500">{student.email}</p>
+                            <p className="font-medium text-[#364954]">{student.fullname}</p>
+                            <p className="text-sm text-[#364954]/60">{student.email}</p>
                           </div>
                         </div>
                         <Button
                           size="sm"
                           onClick={() => handleAddStudent(student)}
                           disabled={addingStudent === student.id}
-                          className="bg-black hover:bg-neutral-800 text-white"
+                          className="bg-[#364954] hover:bg-[#84b1cb] text-white transition-colors duration-200"
                         >
                           {addingStudent === student.id ? "..." : "Добавить"}
                         </Button>
@@ -306,11 +306,11 @@ export default function MyStudentsPage() {
                     ))}
                   </div>
                 ) : searchQuery.length >= 2 ? (
-                  <div className="text-center py-8 text-neutral-500">
+                  <div className="text-center py-8 text-[#364954]/60">
                     Не найдено учеников без тренера
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-neutral-500">
+                  <div className="text-center py-8 text-[#364954]/60">
                     Введите минимум 2 символа для поиска
                   </div>
                 )}
@@ -325,7 +325,7 @@ export default function MyStudentsPage() {
           {user.students.map((student) => (
             <div
               key={student.id}
-              className="bg-white rounded-xl border border-neutral-200 shadow-sm hover:shadow-md transition-all duration-200"
+              className="bg-white rounded-xl border border-[#a7c2d3]/30 shadow-sm hover:shadow-md transition-all duration-200"
             >
               <div className="p-5">
                 <div className="flex items-start justify-between">
@@ -333,16 +333,16 @@ export default function MyStudentsPage() {
                     className="flex items-center gap-3 cursor-pointer group flex-1"
                     onClick={() => router.push(`/profile/${student.id}`)}
                   >
-                    <Avatar className="h-12 w-12 border border-neutral-100">
-                      <AvatarFallback className="bg-neutral-900 text-white text-lg font-medium">
+                    <Avatar className="h-12 w-12 border border-[#a7c2d3]/40">
+                      <AvatarFallback className="bg-[#364954] text-white text-lg font-medium">
                         {student.fullname.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-semibold text-neutral-900 group-hover:underline transition-colors">
+                      <h3 className="font-semibold text-[#364954] group-hover:text-[#84b1cb] transition-colors">
                         {student.fullname}
                       </h3>
-                      <p className="text-sm text-neutral-500">{student.email}</p>
+                      <p className="text-sm text-[#364954]/60">{student.email}</p>
                     </div>
                   </div>
                   <Button
@@ -360,16 +360,16 @@ export default function MyStudentsPage() {
                   </Button>
                 </div>
                 
-                <div className="mt-5 pt-4 border-t border-neutral-100 flex flex-col gap-2">
+                <div className="mt-5 pt-4 border-t border-[#a7c2d3]/20 flex flex-col gap-2">
                   <button
                     onClick={() => router.push(`/my-students/schedule/${student.id}`)}
-                    className="w-full text-sm font-medium bg-black text-white px-4 py-2.5 rounded-lg hover:bg-neutral-800 transition-colors"
+                    className="w-full text-sm font-medium bg-[#364954] text-white px-4 py-2.5 rounded-lg hover:bg-[#84b1cb] transition-colors duration-200"
                   >
                     Создать расписание
                   </button>
                   <button
                     onClick={() => router.push(`/my-students/schedule/view/${student.id}`)}
-                    className="w-full text-sm font-medium bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg hover:bg-neutral-200 transition-colors"
+                    className="w-full text-sm font-medium bg-[#a7c2d3]/20 text-[#364954] px-4 py-2.5 rounded-lg hover:bg-[#84b1cb] hover:text-white transition-colors duration-200"
                   >
                     Посмотреть расписание
                   </button>
@@ -379,32 +379,32 @@ export default function MyStudentsPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-neutral-50 rounded-xl border border-neutral-200 border-dashed">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-neutral-100 mb-4">
-            <svg className="w-6 h-6 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center py-16 bg-[#a7c2d3]/10 rounded-xl border border-[#a7c2d3]/30 border-dashed">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#a7c2d3]/20 mb-4">
+            <svg className="w-6 h-6 text-[#364954]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </div>
-          <p className="text-neutral-900 font-medium">У вас пока нет учеников</p>
-          <p className="text-sm text-neutral-500 mt-1">
+          <p className="text-[#364954] font-medium">У вас пока нет учеников</p>
+          <p className="text-sm text-[#364954]/60 mt-1">
             Нажмите "Добавить ученика", чтобы начать
           </p>
         </div>
       )}
 
       <AlertDialog open={!!studentToRemove} onOpenChange={() => setStudentToRemove(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="border-[#a7c2d3]/30">
           <AlertDialogHeader>
-            <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Ученик <span className="font-semibold text-neutral-900">{studentToRemove?.fullname}</span> будет удален из вашего списка.
+            <AlertDialogTitle className="text-[#364954]">Вы уверены?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[#364954]/70">
+              Ученик <span className="font-semibold text-[#364954]">{studentToRemove?.fullname}</span> будет удален из вашего списка.
               <br /><br />
               <span className="text-red-600 font-semibold">ВНИМАНИЕ:</span> Все уроки с этим учеником будут также удалены. 
               Это действие нельзя отменить.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isRemoving}>Отмена</AlertDialogCancel>
+            <AlertDialogCancel disabled={isRemoving} className="border-[#a7c2d3] text-[#364954] hover:bg-[#a7c2d3]/10">Отмена</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmRemove}
               disabled={isRemoving}

@@ -37,15 +37,14 @@ model User {
   medicalDocuments String?  // Ссылки/информация о справках ученика
   bio String?  // Описание опыта тренера
   
-  role Role     @default(STUDENT) 
-  isChecked Boolean  @default(false)     // Одобрен ли тренер админом
+  role Role @default(STUDENT) 
+  isChecked Boolean @default(false)
 
-  // Селф-релейшн: Один учитель — много учеников
   teacherId String?
-  teacher User?    @relation("TeacherStudents", fields: [teacherId], references: [id], onDelete: SetNull)
-  students User[]   @relation("TeacherStudents")
+  teacher User? @relation("TeacherStudents", fields: [teacherId], references: [id], onDelete: SetNull)
+  students User[] @relation("TeacherStudents")
 
-  // Связи с другими сущностями
+  // Связи с другими таблицами
   studentLessons Lesson[] @relation("StudentLessons")
   teacherLessons Lesson[] @relation("TeacherLessons")
   gameStats GameRound[]
@@ -54,9 +53,9 @@ model User {
   createdAt DateTime @default(now())
 }
 
-// Таблица для автоматического расписания из 5 уроков
+// Таблица для расписания из 5 уроков
 model Lesson {
-  id String @id @default(uuid(7)) // Генерация UUIDv7
+  id String @id @default(uuid(7))
   
   studentId String
   student User @relation("StudentLessons", fields: [studentId], references: [id], onDelete: Cascade)
@@ -67,14 +66,14 @@ model Lesson {
   lessonNumber Int      
   topic String   
   scheduledAt DateTime 
-  meetLink String?  // Ссылка на Яндекс Телемост
+  meetLink String?
   
   status LessonStatus @default(SCHEDULED) 
 }
 
 // Статистика 4-х испытаний из игры на Unity
 model GameRound {
-  id String @id @default(uuid(7)) // Генерация UUIDv7
+  id String @id @default(uuid(7))
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
@@ -90,7 +89,7 @@ model GameRound {
 
 // Обращения в техподдержку
 model Support {
-  id String @id @default(uuid(7)) // Генерация UUIDv7
+  id String @id @default(uuid(7))
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   

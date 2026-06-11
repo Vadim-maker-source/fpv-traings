@@ -18,7 +18,7 @@ export interface UserType {
     fullname: string;
     email: string;
     bio: string | null;
-    isChecked: boolean; // ✅ Добавлено поле isChecked
+    isChecked: boolean;
   } | null;
   students?: {
     id: string;
