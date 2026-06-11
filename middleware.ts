@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest) {
 
   if (token && token.role === "TEACHER" && token.isChecked === false) {
     
-    const allowedPaths = ["/waiting-verification", "/api/auth"];
+    const allowedPaths = ["/", "/waiting-verification", "/api/auth"];
     const isAllowed = allowedPaths.some(path => pathname.startsWith(path));
 
     if (!isAllowed) {

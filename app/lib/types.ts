@@ -31,3 +31,15 @@ export interface UserType {
   gameStats?: any[];
   supportTickets?: any[];
 }
+
+export interface TeacherType {
+  id: string;
+  fullname: string;
+  email: string;
+  phone: string | null;
+  bio: string | null;
+  role: Role;
+  isChecked: boolean;
+  createdAt: Date | string;
+  passport?: string | null; 
+}

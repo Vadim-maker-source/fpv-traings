@@ -191,6 +191,81 @@ export async function sendStudentAddedEmail(
   }
 }
 
+// НОВАЯ ФУНКЦИЯ: Уведомление тренера о заявке от ученика
+export async function sendTeacherApplicationEmail(
+  teacherEmail: string,
+  teacherName: string,
+  studentName: string,
+  studentEmail: string
+) {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background-color: #364954; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h2 style="color: white; margin: 0;">Новая заявка на обучение</h2>
+      </div>
+      
+      <div style="background-color: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+        <p style="color: #374151; font-size: 16px;">Здравствуйте, <strong>${teacherName}</strong>!</p>
+        
+        <p style="color: #374151; font-size: 16px;">
+          Ученик <strong>${studentName}</strong> хочет записаться к вам на занятия.
+        </p>
+        
+        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #1f2937; margin-top: 0;">Контакты ученика:</h3>
+          <p style="color: #4b5563; margin-bottom: 0; font-size: 16px;">
+            📧 Email: <a href="mailto:${studentEmail}" style="color: #364954; text-decoration: underline;">${studentEmail}</a>
+          </p>
+        </div>
+        
+        <p style="color: #374151; font-size: 16px;">
+          Пожалуйста, свяжитесь с учеником для обсуждения деталей обучения.
+        </p>
+        
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="${process.env.NEXTAUTH_URL}/my-students" 
+             style="background-color: #364954; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
+            Перейти в кабинет тренера
+          </a>
+        </div>
+      </div>
+      
+      <div style="background-color: #f8f9fa; padding: 15px; text-align: center; border-radius: 0 0 10px 10px; color: #6b7280; font-size: 12px;">
+        <p style="margin: 0;">Это письмо было отправлено автоматически. Пожалуйста, не отвечайте на него.</p>
+      </div>
+    </div>
+  `;
+  
+  const text = `
+    Новая заявка на обучение
+    
+    Здравствуйте, ${teacherName}!
+    
+    Ученик ${studentName} хочет записаться к вам на занятия.
+    
+    Контакты ученика:
+    Email: ${studentEmail}
+    
+    Пожалуйста, свяжитесь с учеником для обсуждения деталей обучения.
+    Кабинет тренера: ${process.env.NEXTAUTH_URL}/my-students
+  `;
+  
+  try {
+    await transporter.sendMail({
+      from: `"Образовательная платформа" <${process.env.GMAIL_USER}>`,
+      to: teacherEmail,
+      subject: `Заявка от ученика: ${studentName}`,
+      text,
+      html,
+    });
+    console.log(`Application email sent to teacher: ${teacherEmail}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Teacher application email error:", error);
+    throw error;
+  }
+}
+
 export async function sendNewUserVerificationEmail(
   adminEmail: string,
   userName: string,

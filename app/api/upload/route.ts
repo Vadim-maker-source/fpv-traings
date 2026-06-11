@@ -15,8 +15,8 @@ const ALLOWED_MIME = new Set<string>([
 ]);
 
 const s3Client = new S3Client({
-  endpoint: process.env.YANDEX_ENDPOINT?.trim() || "https://storage.yandexcloud.net",
-  region: process.env.YANDEX_REGION || "ru-central1",
+  endpoint: process.env.YANDEX_ENDPOINT?.trim()!,
+  region: process.env.YANDEX_REGION,
   credentials: {
     accessKeyId: process.env.YANDEX_ACCESS!,
     secretAccessKey: process.env.YANDEX_SECRET!,

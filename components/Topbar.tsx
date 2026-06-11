@@ -24,7 +24,6 @@ const Topbar = () => {
         if (currentUser) {
           setUser(currentUser);
         } else {
-          // Если мы уже на странице входа, не редиректим бесконечно
           if (pathname !== "/sign-in") {
             router.push("/sign-in");
           }
@@ -63,14 +62,11 @@ const Topbar = () => {
     setShowMenu(false);
   };
 
-  // Хелпер для проверки активного пути
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(path + "/");
   };
 
-  // Классы для активной ссылки
   const activeClass = "bg-white/20 text-white font-semibold";
-  // Классы для неактивной ссылки
   const inactiveClass = "text-white/80 hover:text-white hover:bg-white/10";
 
   if (loading) {
@@ -154,14 +150,6 @@ const Topbar = () => {
 
             {isAdmin && (
               <>
-                <Link 
-                  href="/admin/users" 
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-                    isActive("/admin/users") ? activeClass : inactiveClass
-                  }`}
-                >
-                  Пользователи
-                </Link>
                 <Link 
                   href="/admin/verification-requests" 
                   className={`px-4 py-2 rounded-lg transition-all duration-200 ${

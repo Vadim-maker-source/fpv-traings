@@ -51,7 +51,7 @@ export async function createUser(data: CreateUserParams) {
       const adminEmail = process.env.GMAIL_USER!
       const verificationLink = `${process.env.NEXTAUTH_URL}/admin/verification-requests`;
   
-      sendNewUserVerificationEmail(adminEmail, user.fullname, user.email, "Тренер", verificationLink).catch(err => console.error("Failed to send admin notification:", err));
+      sendNewUserVerificationEmail(adminEmail, user.fullname, user.email, "Тренер", verificationLink).catch((err: any) => console.error("Failed to send admin notification:", err));
     }
 
     return { success: true, user: userWithoutPassword };

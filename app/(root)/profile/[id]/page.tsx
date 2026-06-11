@@ -51,6 +51,7 @@ const Profile = () => {
   const isStudent = currentUser?.role === Role.STUDENT;
   const isProfileOwner = isCurrentUser;
 
+  // Права доступа
   const canViewPassport = isProfileOwner || isAdmin;
   const canViewMedicalDocs = isProfileOwner || isAdmin;
   const canViewTeacherInfo = isProfileOwner || isStudent || isAdmin;
@@ -304,7 +305,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Documents Section - FIXED */}
+          {/* Documents Section - FIXED LOGIC HERE */}
           {(canViewPassport || canViewMedicalDocs) && (
             <div className="bg-[#a7c2d3]/10 rounded-xl p-6 border border-[#a7c2d3]/30">
               <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-[#364954]">
@@ -312,6 +313,7 @@ const Profile = () => {
                 Документы
               </h2>
               <div className="space-y-6">
+                {/* ПОКАЗЫВАЕМ ПАСПОРТ ТОЛЬКО ЕСЛИ ЭТО ТРЕНЕР */}
                 {user.role === Role.TEACHER && canViewPassport && (
                   <div className="bg-white rounded-lg p-5 border border-[#a7c2d3]/40">
                     <button
@@ -331,6 +333,7 @@ const Profile = () => {
                   </div>
                 )}
 
+                {/* МЕДИЦИНСКИЕ ДОКУМЕНТЫ ТОЛЬКО ДЛЯ УЧЕНИКОВ */}
                 {user.role === Role.STUDENT && canViewMedicalDocs && (
                   <div className="bg-white rounded-lg p-5 border border-[#a7c2d3]/40">
                     <button
@@ -348,6 +351,15 @@ const Profile = () => {
                       </div>
                     )}
                   </div>
+                )}
+
+                {/* Если документов нет или роль не подходит */}
+                {user.role !== Role.TEACHER && user.role !== Role.STUDENT && (
+                   <p className="text-sm text-[#364954]/50 italic">Документы для этой роли не предусмотрены.</p>
+                )}
+                
+                {((user.role === Role.TEACHER && !user.passport) || (user.role === Role.STUDENT && !user.medicalDocuments)) && (
+                   <p className="text-sm text-[#364954]/50 italic">Документы не загружены.</p>
                 )}
               </div>
             </div>

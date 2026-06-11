@@ -13,22 +13,6 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const numericFields = { challenge1, challenge2, challenge3, challenge4, time };
-        for (const [key, value] of Object.entries(numericFields)) {
-            if (value === undefined || value === null) {
-                return NextResponse.json(
-                    { error: `Поле ${key} обязательно`, status: 400 },
-                    { status: 400 }
-                );
-            }
-            if (typeof value !== "number" || isNaN(value)) {
-                return NextResponse.json(
-                    { error: `Поле ${key} должно быть числом`, status: 400 },
-                    { status: 400 }
-                );
-            }
-        }
-
         const totalScore = challenge1 + challenge2 + challenge3 + challenge4;
 
         const result = await createGameRound(

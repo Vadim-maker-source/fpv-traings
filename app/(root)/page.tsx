@@ -1,199 +1,327 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser } from "@/app/lib/api/user";
-import { UserType } from "@/app/lib/types";
+import Link from "next/link";
+import { TeacherType } from "../lib/types";
+import { Role } from "@prisma/client";
 import Image from "next/image";
-import gsap from "gsap";
+
+const faqData = [
+  {
+    question: "Нужен ли свой дрон для обучения?",
+    answer: "Нет, обучение происходит с симуляторов."
+  },
+  {
+    question: "Сколько длится курс?",
+    answer: "Базовый курс пилотирования занимает около 4-6 недель при занятиях 2 раза в неделю. Индивидуальный темп обсуждается с тренером."
+  },
+  {
+    question: "Есть ли возрастные ограничения?",
+    answer: "Мы принимаем учеников от 12 лет. Для детей до 14 лет требуется присутствие родителя на первых занятиях."
+  },
+  {
+    question: "Выдаете ли вы сертификат?",
+    answer: "Да, после успешной сдачи экзамена по теории и практике вы получаете сертификат пилота EDrone."
+  }
+];
 
 export default function Home() {
   const router = useRouter();
-  const [user, setUser] = useState<UserType | null>(null);
+  const [teachers, setTeachers] = useState<TeacherType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Рефы для GSAP
-  const heroRef = useRef<HTMLDivElement>(null);
-  const droneImageRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
+  const [currentUserRole, setCurrentUserRole] = useState<Role | null>(null);
+
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: 'confirm' | 'success' | 'error' | 'auth';
+    message?: string;
+    teacherId?: string;
+  }>({ isOpen: false, type: 'confirm' });
+
+  const [applyingId, setApplyingId] = useState<string | null>(null);
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [messages, setMessages] = useState<{ text: string; isBot: boolean }[]>([
+    { text: "Привет! 👋 Я виртуальный помощник EDrone. Чем могу помочь?", isBot: true }
+  ]);
+  const [inputValue, setInputValue] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+  
+  useEffect(() => {
+    const initData = async () => {
       try {
-        const currentUser = await getCurrentUser();
-        if (currentUser) {
-          setUser(currentUser);
-        } else {
-          router.push("/sign-in");
-        }
+        const res = await fetch("/api/users/teachers");
+        const data = await res.json();
+        setTeachers(data.teachers || []);
       } catch (error) {
-        console.error("Auth error:", error);
-        router.push("/sign-in");
+        console.error(error);
       } finally {
         setLoading(false);
       }
+
+      try {
+        const sessionRes = await fetch("/api/auth/session");
+        const sessionData = await sessionRes.json();
+        if (sessionData?.user?.role) {
+          setCurrentUserRole(sessionData.user.role);
+        }
+      } catch (error) {
+        console.error("Failed to fetch session", error);
+      }
     };
 
-    checkAuth();
-  }, [router]);
+    initData();
+  }, []);
 
-  // Анимации после загрузки данных и рендера
-  useEffect(() => {
-    if (!loading && user) {
-      const tl = gsap.timeline();
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
 
-      // Анимация текста заголовка
-      tl.fromTo(
-        textRef.current?.children || [],
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out" }
-      );
+    const userMsg = inputValue;
+    setMessages(prev => [...prev, { text: userMsg, isBot: false }]);
+    setInputValue("");
 
-      // Анимация появления дрона (вылет снизу)
-      tl.fromTo(
-        droneImageRef.current,
-        { scale: 0.8, opacity: 0, rotation: -10 },
-        { scale: 1, opacity: 1, rotation: 0, duration: 1.5, ease: "elastic.out(1, 0.75)" },
-        "-=0.8"
-      );
+    setTimeout(() => {
+      let botResponse = "Извините, я пока не понял вопрос. Попробуйте спросить про курсы, цены или расписание.";
+      
+      const lowerMsg = userMsg.toLowerCase();
+      if (lowerMsg.includes("цена") || lowerMsg.includes("стоит") || lowerMsg.includes("сколько")) {
+        botResponse = "Стоимость обучения зависит от выбранного пакета. Базовый курс начинается от 15 000₽. Подробности можно узнать у тренера.";
+      } else if (lowerMsg.includes("время") || lowerMsg.includes("расписание") || lowerMsg.includes("когда")) {
+        botResponse = "Мы работаем ежедневно с 10:00 до 21:00. Занятия проходят по предварительной записи с тренером.";
+      } else if (lowerMsg.includes("дрон") || lowerMsg.includes("оборудование")) {
+        botResponse = "На первые занятия мы предоставляем дроны бесплатно. Свое оборудование лучше покупать после консультации с инструктором.";
+      } else if (lowerMsg.includes("привет") || lowerMsg.includes("здравствуй")) {
+        botResponse = "Здравствуйте! Готов ответить на ваши вопросы о школе пилотирования.";
+      }
 
-      // Постоянная левитация дрона
-      gsap.to(droneImageRef.current, {
-        y: -20,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      // Появление блока с преимуществами
-      gsap.fromTo(
-        featuresRef.current?.children || [],
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, scrollTrigger: featuresRef.current }
-      );
-    }
-  }, [loading, user]);
-
-  // Обработка движения мыши для параллакса дрона
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!droneImageRef.current) return;
-    
-    const x = (window.innerWidth / 2 - e.pageX) / 25;
-    const y = (window.innerHeight / 2 - e.pageY) / 25;
-
-    gsap.to(droneImageRef.current, {
-      rotationY: x,
-      rotationX: y,
-      ease: "power1.out",
-      duration: 0.5,
-    });
+      setMessages(prev => [...prev, { text: botResponse, isBot: true }]);
+    }, 1000);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#84b1cb]"></div>
-      </div>
-    );
-  }
+  const openConfirmModal = (teacherId: string) => {
+    setModalState({ isOpen: true, type: 'confirm', teacherId });
+  };
 
-  if (!user) return null;
+  const handleApplySubmit = async () => {
+    if (!modalState.teacherId || applyingId) return;
+    setApplyingId(modalState.teacherId);
+    
+    try {
+      const res = await fetch("/api/request-teacher", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ teacherId: modalState.teacherId }),
+      });
+      const result = await res.json();
+      if (res.ok) setModalState({ isOpen: true, type: 'success' });
+      else if (res.status === 401) setModalState({ isOpen: true, type: 'auth' });
+      else setModalState({ isOpen: true, type: 'error', message: result.error });
+    } catch (error) {
+      setModalState({ isOpen: true, type: 'error', message: "Ошибка сети" });
+    } finally {
+      setApplyingId(null);
+    }
+  };
+
+  const closeModal = () => {
+    setModalState({ ...modalState, isOpen: false });
+    if (modalState.type === 'auth') router.push("/sign-in");
+  };
 
   return (
-    <div className="min-h-screen bg-neutral-50 overflow-x-hidden" onMouseMove={handleMouseMove}>
+    <div className="min-h-screen text-[#364954] font-sans relative">
+      
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+        
+        {isChatOpen && (
+          <div className="w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-[#a7c2d3]/30 overflow-hidden flex flex-col animate-in slide-in-from-bottom-10 fade-in duration-300 origin-bottom-right h-[500px] max-h-[80vh]">
+            {/* Header */}
+            <div className="bg-[#364954] p-4 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-[#84b1cb] rounded-full flex items-center justify-center text-white font-bold text-xs">AI</div>
+                <div>
+                  <h4 className="text-white font-semibold text-sm">Помощник EDrone</h4>
+                  <span className="text-[#a7c2d3] text-xs flex items-center gap-1">
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Онлайн
+                  </span>
+                </div>
+              </div>
+              <button onClick={() => setIsChatOpen(false)} className="text-white/70 hover:text-white transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
 
-      {/* Hero Section */}
-      <section ref={heroRef} className="relative pt-20 pb-32 lg:pt-32 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f8fafc]">
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`flex ${msg.isBot ? 'justify-start' : 'justify-end'}`}>
+                  <div className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${
+                    msg.isBot 
+                      ? 'bg-white border border-[#a7c2d3]/20 text-[#364954] rounded-tl-none' 
+                      : 'bg-[#364954] text-white rounded-tr-none'
+                  }`}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-[#a7c2d3]/20 flex gap-2">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Напишите сообщение..."
+                className="flex-1 bg-[#f8fafc] border border-[#a7c2d3]/30 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-[#84b1cb] text-[#364954]"
+              />
+              <button 
+                type="submit"
+                disabled={!inputValue.trim()}
+                className="w-10 h-10 bg-[#364954] text-white rounded-full flex items-center justify-center hover:bg-[#84b1cb] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Toggle Button */}
+        <button 
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className="w-14 h-14 bg-[#364954] text-white rounded-full shadow-lg hover:bg-[#84b1cb] hover:scale-110 transition-all duration-300 flex items-center justify-center group ring-4 ring-white"
+        >
+          {isChatOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          ) : (
+            <svg className="w-7 h-7 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+          )}
+        </button>
+      </div>
+
+      {/* --- Modal for Teacher Application --- */}
+      {modalState.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative transform transition-all scale-100">
+            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-[#364954]">✕</button>
             
-            {/* Text Content */}
-            <div ref={textRef} className="space-y-8">
-              <h1 className="text-5xl md:text-7xl font-bold text-neutral-900 tracking-tight leading-tight">
-                Управляй будущим <br />
-                <span className="text-[#84b1cb]">с EDrone</span>
-              </h1>
-              <p className="text-xl text-neutral-600 max-w-lg">
-                Профессиональное обучение пилотированию дронов, симуляторы и реальные полеты. Начни свой путь в небо уже сегодня.
-              </p>
-              
-              <div className="flex flex-wrap gap-4">
-                <button 
-                  onClick={() => router.push('/lessons')}
-                  className="px-8 py-4 bg-black text-white rounded-full font-semibold hover:bg-neutral-800 transition-all transform hover:scale-105 shadow-lg"
-                >
-                  Начать обучение
-                </button>
-                <button className="px-8 py-4 bg-white text-neutral-900 border border-neutral-200 rounded-full font-semibold hover:bg-neutral-50 transition-all">
-                  Узнать больше
-                </button>
-              </div>
-
-              {/* Stats */}
-              <div className="pt-8 flex gap-8 border-t border-neutral-200">
-                <div>
-                  <p className="text-3xl font-bold text-neutral-900">500+</p>
-                  <p className="text-sm text-neutral-500">Выпускников</p>
+            {modalState.type === 'confirm' && (
+              <div className="text-center">
+                <div className="w-12 h-12 bg-[#a7c2d3]/20 rounded-full flex items-center justify-center mx-auto mb-4 text-[#364954]">
+                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                <div>
-                  <p className="text-3xl font-bold text-neutral-900">50+</p>
-                  <p className="text-sm text-neutral-500">Тренеров</p>
+                <h3 className="text-xl font-bold mb-2">Подтверждение записи</h3>
+                <p className="text-gray-600 mb-6">Вы хотите подать заявку этому тренеру?</p>
+                <div className="flex gap-3 justify-center">
+                  <button onClick={closeModal} className="px-5 py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50">Отмена</button>
+                  <button onClick={handleApplySubmit} disabled={!!applyingId} className="px-5 py-2.5 rounded-lg bg-[#364954] text-white hover:bg-[#84b1cb]">
+                    {applyingId ? "..." : "Подтвердить"}
+                  </button>
                 </div>
               </div>
-            </div>
+            )}
+            {modalState.type === 'success' && (
+               <div className="text-center py-4">
+                 <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">✓</div>
+                 <h3 className="text-xl font-bold mb-2">Заявка отправлена!</h3>
+                 <button onClick={closeModal} className="mt-4 w-full py-3 bg-[#364954] text-white rounded-lg">Отлично</button>
+               </div>
+            )}
+             {modalState.type === 'auth' && (
+               <div className="text-center py-4">
+                 <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">🔒</div>
+                 <h3 className="text-xl font-bold mb-2">Требуется вход</h3>
+                 <div className="flex gap-3 mt-4">
+                   <button onClick={closeModal} className="flex-1 py-3 border rounded-lg">Позже</button>
+                   <button onClick={() => router.push('/sign-in')} className="flex-1 py-3 bg-[#364954] text-white rounded-lg">Войти</button>
+                 </div>
+               </div>
+            )}
+             {modalState.type === 'error' && (
+               <div className="text-center py-4">
+                 <h3 className="text-xl font-bold mb-2 text-red-600">Ошибка</h3>
+                 <p className="text-gray-600 mb-4">{modalState.message}</p>
+                 <button onClick={closeModal} className="w-full py-3 bg-gray-100 rounded-lg">Закрыть</button>
+               </div>
+            )}
+          </div>
+        </div>
+      )}
 
-            {/* Drone Image */}
-            <div className="relative lg:h-[600px] flex items-center justify-center perspective-1000">
-              <div ref={droneImageRef} className="relative w-full max-w-lg drop-shadow-2xl">
-                {/* Используем предоставленное изображение или заглушку, если файл не найден */}
-                <Image 
-                  src="/images/drone.png" // Убедитесь, что картинка лежит в public/images/
-                  alt="Racing Drone" 
-                  width={800} 
-                  height={800} 
-                  priority
-                  className="w-full h-auto object-contain"
-                />
-                
-                {/* Декоративные элементы (круги на фоне) */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[#84b1cb]/10 rounded-full blur-3xl -z-10"></div>
-              </div>
+      <section className="pt-20 pb-16 lg:pt-32 lg:pb-24 px-4">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+              Стань пилотом <br/> <span className="text-white">будущего</span>
+            </h1>
+            <p className="text-lg text-[#364954]/70 max-w-md">
+              Профессиональная школа FPV-пилотирования. Обучение на симуляторах.
+            </p>
+            <div className="flex gap-4 pt-4">
+              <button onClick={() => router.push('/lessons')} className="px-8 py-3 bg-[#364954] text-white rounded-lg font-semibold hover:bg-[#84b1cb]">
+                Начать обучение
+              </button>
             </div>
+          </div>
+          <div className="relative h-125 aspect-square rounded-2xl flex items-center justify-center">
+             <Image src="/images/drone.png" alt="Дрон" fill className="object-contain" />
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">Почему выбирают нас</h2>
-            <p className="text-neutral-500 max-w-2xl mx-auto">Мы предоставляем лучший опыт обучения пилотированию квадрокоптеров в стране.</p>
+      <section id="teachers" className="py-20 bg-[#f8fafc]">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Команда инструкторов</h2>
+          <div className="flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+            {loading ? <div className="w-full text-center py-10">Загрузка...</div> : teachers.map((teacher) => {
+              const isTeacher = currentUserRole === Role.TEACHER;
+              return (
+                <div key={teacher.id} className="min-w-[280px] snap-center bg-white border border-[#a7c2d3]/30 rounded-xl p-6 flex flex-col items-center text-center shadow-sm">
+                  <div className="w-20 h-20 rounded-full bg-[#a7c2d3]/20 flex items-center justify-center text-2xl font-bold mb-4">
+                    {teacher.fullname.charAt(0)}
+                  </div>
+                  <Link href={`/profile/${teacher.id}`}><h3 className="font-bold text-lg hover:opacity-80 duration-200">{teacher.fullname}</h3></Link>
+                  <p className="text-sm text-[#364954]/70 line-clamp-3 my-4">{teacher.bio || "Опытный инструктор."}</p>
+                  
+                  {!isTeacher && (
+                    <button onClick={() => openConfirmModal(teacher.id)} className="w-full py-2 bg-[#364954] text-white rounded-lg hover:bg-[#84b1cb]">
+                      Записаться
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
+        </div>
+      </section>
 
-          <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { title: "Опытные тренеры", desc: "Сертифицированные пилоты с реальным опытом гонок.", icon: "🎓" },
-              { title: "Современное оборудование", desc: "Дроны последнего поколения и профессиональные симуляторы.", icon: "🚁" },
-              { title: "Индивидуальный подход", desc: "Персональный план обучения под ваши цели и уровень.", icon: "🎯" },
-            ].map((feature, index) => (
-              <div key={index} className="p-8 rounded-2xl bg-neutral-50 hover:bg-white hover:shadow-xl transition-all duration-300 border border-neutral-100 group">
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-2">{feature.title}</h3>
-                <p className="text-neutral-600">{feature.desc}</p>
-              </div>
+      <section id="faq" className="py-20 px-4">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold mb-10 text-center">Частые вопросы</h2>
+          <div className="space-y-4">
+            {faqData.map((item, index) => (
+              <details key={index} className="group bg-white border border-[#a7c2d3]/20 rounded-lg">
+                <summary className="flex justify-between items-center font-medium cursor-pointer p-6 list-none">
+                  <span>{item.question}</span>
+                  <span className="transition group-open:rotate-180">▼</span>
+                </summary>
+                <div className="px-6 pb-6 text-[#364954]/70">{item.answer}</div>
+              </details>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer Simple */}
-      <footer className="bg-neutral-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-neutral-400">© 2026 EDrone. Все права защищены.</p>
-        </div>
+      <footer className="bg-[#364954] text-white py-12 text-center">
+        <p className="text-[#a7c2d3] text-sm">© 2026 EDrone School</p>
       </footer>
     </div>
   );
