@@ -12,7 +12,7 @@
     "@aws-sdk/client-s3": "^3.1065.0",
     "@libsql/client": "^0.17.3",
     "@next-auth/prisma-adapter": "^1.0.7",
-    "@prisma/adapter-libsql": "^7.8.0",
+    "@prisma/adapter-libsql": "^6.18.0",
     "@prisma/client": "^6.18.0",
     "@types/nodemailer": "^8.0.0",
     "bcryptjs": "^3.0.3",
