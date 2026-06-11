@@ -1,36 +1,34 @@
-# 4. РАСПАКОВКА И ПЕРЕМЕЩЕНИЕ (ИСПРАВЛЕНИЕ ПРОБЕЛОВ)
-echo "📂 Распаковываем архив..."
+#!/bin/bash
+set -e # Останавливаем скрипт при любой ошибке
 
-# Распаковываем во временную папку
-unzip -o "temp_download/$FILE_NAME" -d public/temp_extract
+echo "🚀 Начинаем загрузку билда Unity..."
 
-# Проверяем, что распаковка прошла успешно
-if [ ! -d "public/temp_extract" ]; then
-    echo "❌ Ошибка: Папка temp_extract не создана!"
-    rm -rf temp_download public/temp_extract
+# 1. Создаем временную папку и переходим в неё
+mkdir -p temp_download
+cd temp_download
+
+# 2. Скачиваем архив по прямой ссылке
+curl -L "https://getfile.dokpub.com/yandex/get/https://disk.yandex.ru/d/IbVjYBpv7FCVDg" -o build.zip
+
+# 3. Проверяем, что файл скачался и не пустой
+if [ ! -s build.zip ]; then
+    echo "❌ Ошибка: Архив не скачался или поврежден!"
+    cd .. && rm -rf temp_download
     exit 1
 fi
 
-# Находим первую папку внутри архива (с кавычками для пробелов!)
-FIRST_DIR=$(ls -A public/temp_extract | head -n 1)
+echo "✅ Архив успешно скачан."
 
-if [ -z "$FIRST_DIR" ]; then
-    echo "❌ Ошибка: Архив пуст или структура неверна!"
-    rm -rf temp_download public/temp_extract
-    exit 1
-fi
+# 4. Возвращаемся в корень проекта
+cd ..
 
-echo "⚠️ Обнаружена папка-обертка: '$FIRST_DIR'. Переносим содержимое..."
-
-# Создаем целевую папку
+# 5. Создаем целевую папку и распаковываем СРАЗУ в неё
+# Так как внутри архива нет лишней папки, --strip-components не нужен
 mkdir -p public/game
+unzip -o temp_download/build.zip -d public/game
 
-# Перемещаем ВСЁ содержимое (включая скрытые файлы) с правильными кавычками
-mv "public/temp_extract/$FIRST_DIR/"* public/game/
-mv "public/temp_extract/$FIRST_DIR/".[!.]* public/game/ 2>/dev/null || true
-
-# Удаляем временные папки
-rm -rf temp_download public/temp_extract
+# 6. Убираем временные файлы
+rm -rf temp_download
 
 echo "✅ Билд успешно установлен в public/game/"
 ls -la public/game/
