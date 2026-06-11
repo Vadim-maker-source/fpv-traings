@@ -1,11 +1,11 @@
-datasource db {
-  provider = "sqlite"
-  url = env("DATABASE_URL")
-}
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters"] // Необходим для работы с Turso
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
 }
 
 // Перечисления для строгой типизации
@@ -27,7 +27,7 @@ enum SupportStatus {
 
 // Единая модель для пользователей всех ролей
 model User {
-  id String @id @default(uuid(7)) // Генерация UUIDv7
+  id String @id @default(uuid()) // Генерация UUIDv7
   fullname String
   email String @unique
   password String   // Хэшированный пароль для NextAuth
@@ -55,7 +55,7 @@ model User {
 
 // Таблица для расписания из 5 уроков
 model Lesson {
-  id String @id @default(uuid(7))
+  id String @id @default(uuid())
   
   studentId String
   student User @relation("StudentLessons", fields: [studentId], references: [id], onDelete: Cascade)
@@ -73,7 +73,7 @@ model Lesson {
 
 // Статистика 4-х испытаний из игры на Unity
 model GameRound {
-  id String @id @default(uuid(7))
+  id String @id @default(uuid())
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
@@ -89,7 +89,7 @@ model GameRound {
 
 // Обращения в техподдержку
 model Support {
-  id String @id @default(uuid(7))
+  id String @id @default(uuid())
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
