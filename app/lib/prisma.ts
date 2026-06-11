@@ -1,13 +1,22 @@
-// app/lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
 const globalForPrisma = globalThis as unknown as {
-    prisma: PrismaClient | undefined;
+  prisma: PrismaClient | undefined;
 };
 
-// Временно используем только локальный SQLite для разработки
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : [],
+const adapter = new PrismaLibSql({
+  url: process.env.DATABASE_URL!,
+  authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : [],
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
