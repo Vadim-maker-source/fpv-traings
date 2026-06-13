@@ -3,9 +3,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { TeacherType } from "../lib/types";
+import { TeacherType, UserType } from "../lib/types";
 import { Role } from "@prisma/client";
 import Image from "next/image";
+import { getCurrentUser } from "../lib/api/user";
 
 const faqData = [
   {
@@ -32,6 +33,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   const [currentUserRole, setCurrentUserRole] = useState<Role | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
@@ -66,10 +68,10 @@ export default function Home() {
       }
 
       try {
-        const sessionRes = await fetch("/api/auth/session");
-        const sessionData = await sessionRes.json();
-        if (sessionData?.user?.role) {
-          setCurrentUserRole(sessionData.user.role);
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+        if (user?.role) {
+          setCurrentUserRole(user.role);
         }
       } catch (error) {
         console.error("Failed to fetch session", error);
@@ -305,7 +307,7 @@ export default function Home() {
                   <Link href={`/profile/${teacher.id}`}><h3 className="font-bold text-lg hover:opacity-80 duration-200">{teacher.fullname}</h3></Link>
                   <p className="text-sm text-[#364954]/70 line-clamp-3 my-4">{teacher.bio || "Опытный инструктор."}</p>
                   
-                  {!isTeacher && (
+                  {!isTeacher && !user?.teacherId && (
                     <button onClick={() => openConfirmModal(teacher.id)} className="w-full py-2 bg-[#364954] text-white rounded-lg hover:bg-[#84b1cb]">
                       Записаться
                     </button>
