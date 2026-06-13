@@ -91,7 +91,7 @@ export default function Home() {
       let botResponse = "Извините, я пока не понял вопрос. Попробуйте спросить про курсы, цены или расписание.";
       
       const lowerMsg = userMsg.toLowerCase();
-      if (lowerMsg.includes("цена") || lowerMsg.includes("стоит") || lowerMsg.includes("сколько")) {
+      if (lowerMsg.includes("цена") || lowerMsg.includes("стоит") || lowerMsg.includes("сколько") || lowerMsg.includes("цены") || lowerMsg.includes("прайс")) {
         botResponse = "Стоимость обучения зависит от выбранного пакета. Базовый курс начинается от 15 000₽. Подробности можно узнать у тренера.";
       } else if (lowerMsg.includes("время") || lowerMsg.includes("расписание") || lowerMsg.includes("когда")) {
         botResponse = "Мы работаем ежедневно с 10:00 до 21:00. Занятия проходят по предварительной записи с тренером.";
@@ -99,6 +99,20 @@ export default function Home() {
         botResponse = "На первые занятия мы предоставляем дроны бесплатно. Свое оборудование лучше покупать после консультации с инструктором.";
       } else if (lowerMsg.includes("привет") || lowerMsg.includes("здравствуй")) {
         botResponse = "Здравствуйте! Готов ответить на ваши вопросы о школе пилотирования.";
+      } else if (lowerMsg.includes("шмыг") || lowerMsg.includes("шмыгарян")) {
+        botResponse = "ШУЕ.";
+      }
+      else if (lowerMsg.includes("банан")) {
+        botResponse = "Дай его ХАММАММ";
+      }
+      else if (lowerMsg.includes("плаксик")) {
+        botResponse = "Шо?";
+      }
+      else if (lowerMsg.includes("спой") || lowerMsg.includes("споешь") || lowerMsg.includes("споёшь") || lowerMsg.includes("песню") || lowerMsg.includes("песня")) {
+        botResponse = "Банан, банан, дай его хаммам. Банан, банан, дай его хаммам. Банан, банан, дай его хаммам.";
+      }
+      else if (lowerMsg.includes("цитата") || lowerMsg.includes("вова")) {
+        botResponse = '"Я буду крутиться на твоем члене, если вы синхронизируете юнити"';
       }
 
       setMessages(prev => [...prev, { text: botResponse, isBot: true }]);
@@ -266,7 +280,7 @@ export default function Home() {
               Профессиональная школа FPV-пилотирования. Обучение на симуляторах.
             </p>
             <div className="flex gap-4 pt-4">
-              <button onClick={() => router.push('/lessons')} className="px-8 py-3 bg-[#364954] text-white rounded-lg font-semibold hover:bg-[#84b1cb]">
+              <button onClick={() => router.push('/#teachers')} className="px-8 py-3 bg-[#364954] text-white rounded-lg font-semibold hover:bg-[#84b1cb]">
                 Начать обучение
               </button>
             </div>
