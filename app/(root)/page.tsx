@@ -102,9 +102,9 @@ export default function Home() {
       } else if (lowerMsg.includes("привет") || lowerMsg.includes("здравствуй")) {
         botResponse = "Здравствуйте! Готов ответить на ваши вопросы о школе пилотирования.";
       }
-      // else if (lowerMsg.includes("шмыг") || lowerMsg.includes("шмыгарян")) {
-      //   botResponse = "ШУЕ.";
-      // }
+      else if (lowerMsg.includes("шмыг") || lowerMsg.includes("шмыгарян")) {
+        botResponse = "ШУЕ.";
+      }
       // else if (lowerMsg.includes("банан")) {
       //   botResponse = "Дай его ХАММАММ";
       // }
