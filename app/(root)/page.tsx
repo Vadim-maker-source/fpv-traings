@@ -14,16 +14,16 @@ const faqData = [
     answer: "Нет, обучение происходит с симуляторов."
   },
   {
-    question: "Сколько длится курс?",
-    answer: "Базовый курс пилотирования занимает около 4-6 недель при занятиях 2 раза в неделю. Индивидуальный темп обсуждается с тренером."
+    question: "Как записаться на курс?",
+    answer: "Подайте заявку учителю и Вас добавят на персональный курс."
   },
   {
     question: "Есть ли возрастные ограничения?",
-    answer: "Мы принимаем учеников от 12 лет. Для детей до 14 лет требуется присутствие родителя на первых занятиях."
+    answer: "Мы принимаем учеников от 18 лет."
   },
   {
-    question: "Выдаете ли вы сертификат?",
-    answer: "Да, после успешной сдачи экзамена по теории и практике вы получаете сертификат пилота EDrone."
+    question: "Не устраивает время, выбранное тренером?",
+    answer: "Напишите в поддержку для регулировки времени."
   }
 ];
 
@@ -101,21 +101,22 @@ export default function Home() {
         botResponse = "На первые занятия мы предоставляем дроны бесплатно. Свое оборудование лучше покупать после консультации с инструктором.";
       } else if (lowerMsg.includes("привет") || lowerMsg.includes("здравствуй")) {
         botResponse = "Здравствуйте! Готов ответить на ваши вопросы о школе пилотирования.";
-      } else if (lowerMsg.includes("шмыг") || lowerMsg.includes("шмыгарян")) {
-        botResponse = "ШУЕ.";
       }
-      else if (lowerMsg.includes("банан")) {
-        botResponse = "Дай его ХАММАММ";
-      }
-      else if (lowerMsg.includes("плаксик")) {
-        botResponse = "Шо?";
-      }
-      else if (lowerMsg.includes("спой") || lowerMsg.includes("споешь") || lowerMsg.includes("споёшь") || lowerMsg.includes("песню") || lowerMsg.includes("песня")) {
-        botResponse = "Банан, банан, дай его хаммам. Банан, банан, дай его хаммам. Банан, банан, дай его хаммам.";
-      }
-      else if (lowerMsg.includes("цитата") || lowerMsg.includes("вова")) {
-        botResponse = '"Я буду крутиться на твоем члене, если вы синхронизируете юнити"';
-      }
+      // else if (lowerMsg.includes("шмыг") || lowerMsg.includes("шмыгарян")) {
+      //   botResponse = "ШУЕ.";
+      // }
+      // else if (lowerMsg.includes("банан")) {
+      //   botResponse = "Дай его ХАММАММ";
+      // }
+      // else if (lowerMsg.includes("плаксик")) {
+      //   botResponse = "Шо?";
+      // }
+      // else if (lowerMsg.includes("спой") || lowerMsg.includes("споешь") || lowerMsg.includes("споёшь") || lowerMsg.includes("песню") || lowerMsg.includes("песня")) {
+      //   botResponse = "Банан, банан, дай его хаммам. Банан, банан, дай его хаммам. Банан, банан, дай его хаммам.";
+      // }
+      // else if (lowerMsg.includes("цитата") || lowerMsg.includes("вова")) {
+      //   botResponse = '"Я буду крутиться на твоем члене, если вы синхронизируете юнити"';
+      // }
 
       setMessages(prev => [...prev, { text: botResponse, isBot: true }]);
     }, 1000);
@@ -307,7 +308,7 @@ export default function Home() {
                   <Link href={`/profile/${teacher.id}`}><h3 className="font-bold text-lg hover:opacity-80 duration-200">{teacher.fullname}</h3></Link>
                   <p className="text-sm text-[#364954]/70 line-clamp-3 my-4">{teacher.bio || "Опытный инструктор."}</p>
                   
-                  {!isTeacher && !user?.teacherId && (
+                  {!isTeacher && (!user?.teacherId || user.teacherId === null) && (
                     <button onClick={() => openConfirmModal(teacher.id)} className="w-full py-2 bg-[#364954] text-white rounded-lg hover:bg-[#84b1cb]">
                       Записаться
                     </button>

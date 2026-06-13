@@ -42,7 +42,8 @@ export async function POST(req: Request) {
         teacher?.email!,
         teacher?.fullname!,
         student.fullname,
-        student.email
+        student.email,
+        student.birthDate!
       ).catch((error: any) => console.error("Ошибка отправки уведомления тренеру:", error));
     }
 

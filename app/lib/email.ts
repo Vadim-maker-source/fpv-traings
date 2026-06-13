@@ -191,12 +191,12 @@ export async function sendStudentAddedEmail(
   }
 }
 
-// НОВАЯ ФУНКЦИЯ: Уведомление тренера о заявке от ученика
 export async function sendTeacherApplicationEmail(
   teacherEmail: string,
   teacherName: string,
   studentName: string,
-  studentEmail: string
+  studentEmail: string,
+  birthday: string
 ) {
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -209,6 +209,10 @@ export async function sendTeacherApplicationEmail(
         
         <p style="color: #374151; font-size: 16px;">
           Ученик <strong>${studentName}</strong> хочет записаться к вам на занятия.
+        </p>
+
+        <p style="color: #374151; font-size: 16px;">
+          Дата рождения ученика <strong>${birthday}</strong> хочет записаться к вам на занятия.
         </p>
         
         <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
