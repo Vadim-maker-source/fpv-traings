@@ -18,10 +18,6 @@ const faqData = [
     answer: "Подайте заявку учителю и Вас добавят на персональный курс."
   },
   {
-    question: "Есть ли возрастные ограничения?",
-    answer: "Мы принимаем учеников от 18 лет."
-  },
-  {
     question: "Не устраивает время, выбранное тренером?",
     answer: "Напишите в поддержку для регулировки времени."
   }
@@ -280,11 +276,11 @@ export default function Home() {
               Стань пилотом <br/> <span className="text-white">будущего</span>
             </h1>
             <p className="text-lg text-[#364954]/70 max-w-md">
-              Профессиональная школа FPV-пилотирования. Обучение на симуляторах.
+              Онлайн тренажер управления FPV-дроном. Обучение на симуляторе.
             </p>
             <div className="flex gap-4 pt-4">
-              <button onClick={() => router.push('/#teachers')} className="px-8 py-3 bg-[#364954] text-white rounded-lg font-semibold hover:bg-[#84b1cb]">
-                Начать обучение
+              <button onClick={() => router.push('/#teachers')} className="px-8 py-3 bg-[#364954] text-white rounded-lg font-semibold hover:bg-[#84b1cb] duration-300 cursor-pointer">
+                Приобрести
               </button>
             </div>
           </div>
@@ -294,7 +290,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="teachers" className="py-20 bg-[#f8fafc]">
+      {/* <section id="teachers" className="py-20 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8 text-center">Команда инструкторов</h2>
           <div className="flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
@@ -316,6 +312,33 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section> */}
+      
+      <section id="teachers" className="py-20 bg-[#f8fafc]">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Партнёры</h2>
+          <div className="flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+            
+            
+                <div className="w-70 snap-center rounded-xl p-6 flex flex-col items-center justify-center text-center gap-4">
+                  <img src="/images/kvantorium.png" alt="Кванториум" className="w-full" />
+                  <p className="text-xl font-semibold">Кванториум</p>
+                </div>
+                <div className="w-70 snap-center rounded-xl p-6 flex flex-col items-center justify-center text-center gap-4">
+                  <img src="/images/lgtu.png" alt="ЛГТУ" className="w-full" />
+                  <p className="text-xl font-semibold">Липецкий государственный технический университет</p>
+                </div>
+                <div className="w-70 snap-center rounded-xl p-6 flex flex-col items-center justify-center text-center gap-4">
+                  <img src="/images/iro.png" alt="ИРО" className="w-full" />
+                  <p className="text-xl font-semibold">Институт развития образования</p>
+                </div>
+                <div className="w-70 snap-center rounded-xl p-6 flex flex-col items-center justify-center text-center gap-4">
+                  <img src="/images/uz1.png" alt="Учебное заведение 1" className="w-full" />
+                  <p className="text-xl font-semibold">Учебное заведение 1</p>
+                </div>
+                
           </div>
         </div>
       </section>
