@@ -335,8 +335,8 @@ export default function Home() {
                   <p className="text-xl font-semibold">Институт развития образования</p>
                 </div>
                 <div className="w-70 snap-center rounded-xl p-6 flex flex-col items-center justify-center text-center gap-4">
-                  <img src="/images/uz1.png" alt="Учебное заведение 1" className="w-full" />
-                  <p className="text-xl font-semibold">Учебное заведение 1</p>
+                  <img src="/images/mai.png" alt="МАИ" className="w-full" />
+                  <p className="text-xl font-semibold">Московский авиационный институт</p>
                 </div>
                 
           </div>
