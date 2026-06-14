@@ -98,18 +98,18 @@ export default function Home() {
       } else if (lowerMsg.includes("привет") || lowerMsg.includes("здравствуй")) {
         botResponse = "Здравствуйте! Готов ответить на ваши вопросы о школе пилотирования.";
       }
-      else if (lowerMsg.includes("шмыг") || lowerMsg.includes("шмыгарян")) {
-        botResponse = "ШУЕ.";
+      // else if (lowerMsg.includes("шмыг") || lowerMsg.includes("шмыгарян")) {
+      //   botResponse = "ШУЕ.";
+      // }
+      else if (lowerMsg.includes("банан")) {
+        botResponse = "Дай его ХАММАММ";
       }
-      // else if (lowerMsg.includes("банан")) {
-      //   botResponse = "Дай его ХАММАММ";
-      // }
-      // else if (lowerMsg.includes("плаксик")) {
-      //   botResponse = "Шо?";
-      // }
-      // else if (lowerMsg.includes("спой") || lowerMsg.includes("споешь") || lowerMsg.includes("споёшь") || lowerMsg.includes("песню") || lowerMsg.includes("песня")) {
-      //   botResponse = "Банан, банан, дай его хаммам. Банан, банан, дай его хаммам. Банан, банан, дай его хаммам.";
-      // }
+      else if (lowerMsg.includes("плаксик")) {
+        botResponse = "Шо?";
+      }
+      else if (lowerMsg.includes("спой") || lowerMsg.includes("споешь") || lowerMsg.includes("споёшь") || lowerMsg.includes("песню") || lowerMsg.includes("песня")) {
+        botResponse = "Банан, банан, дай его хаммам. Банан, банан, дай его хаммам. Банан, банан, дай его хаммам.";
+      }
       // else if (lowerMsg.includes("цитата") || lowerMsg.includes("вова")) {
       //   botResponse = '"Я буду крутиться на твоем члене, если вы синхронизируете юнити"';
       // }
