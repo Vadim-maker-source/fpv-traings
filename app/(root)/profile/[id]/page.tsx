@@ -214,15 +214,6 @@ const Profile = () => {
                   Управление
                 </button>
               )}
-              {isProfileOwner && (
-                <button
-                  type="button"
-                  onClick={() => toast.error("Функция редактирования профиля пока недоступна")}
-                  className="px-4 py-2.5 bg-white text-[#364954] rounded-lg hover:bg-[#a7c2d3]/20 transition-colors font-medium text-sm border border-[#a7c2d3]"
-                >
-                  Редактировать
-                </button>
-              )}
             </div>
           </div>
         </div>

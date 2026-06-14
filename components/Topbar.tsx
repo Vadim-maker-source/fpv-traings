@@ -24,9 +24,6 @@ const Topbar = () => {
         if (currentUser) {
           setUser(currentUser);
         } else {
-          if (pathname !== "/sign-in") {
-            router.push("/sign-in");
-          }
         }
       } catch (error) {
         console.error("Auth error:", error);
